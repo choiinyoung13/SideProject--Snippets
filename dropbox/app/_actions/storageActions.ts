@@ -1,51 +1,50 @@
-'use server'
+"use server";
 
-import { createServerSupabaseClient } from '../_util/supabase/server'
+import { createServerSupabaseClient } from "../_util/supabase/server";
 
 function handleError(error) {
   if (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
 }
 
 export async function uploadFile(formData: FormData) {
-  const supabase = await createServerSupabaseClient()
-  const file = formData.get('file') as File
+  const supabase = await createServerSupabaseClient();
+  const files = formData.getAll("files") as File[];
 
-  const { data, error } = await supabase.storage
-    .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET)
-    .upload(file.name, file, { upsert: true })
+  const uploadPromises = files.map(async (file) => {
+    await supabase.storage
+      .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET)
+      .upload(file.name, file, { upsert: true });
+  });
 
-  if (error) {
-    handleError(error)
-  }
-
-  return data
+  const results = await Promise.all(uploadPromises);
+  return results;
 }
 
-export async function searchFiles(search: string = '') {
-  const supabase = await createServerSupabaseClient()
+export async function searchFiles(search: string = "") {
+  const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase.storage
     .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET)
     .list(null, {
       search,
-    })
+    });
 
-  handleError(error)
+  handleError(error);
 
-  return data
+  return data;
 }
 
 export async function deleteFiles(fileName: string) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase.storage
     .from(process.env.NEXT_PUBLIC_STORAGE_BUCKET)
-    .remove([fileName])
+    .remove([fileName]);
 
-  handleError(error)
+  handleError(error);
 
-  return data
+  return data;
 }
