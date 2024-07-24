@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 export default function Footer() {
   return (
@@ -6,11 +6,11 @@ export default function Footer() {
       <p className="text-white">Movie Database from</p>
       <Link
         className="text-blue-700"
-        href={"https://www.themoviedb.org/?language=ko-KR"}
+        href={'https://www.themoviedb.org/?language=ko-KR'}
       >
-        {" "}
+        {' '}
         TMDB
       </Link>
     </footer>
-  );
+  )
 }

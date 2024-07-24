@@ -1,9 +1,9 @@
-import Ui from "./_components/Ui";
+import Ui from './_components/Ui'
 
 export default function MovieDetail({ params }) {
   return (
-    <div>
+    <div className="mt-14">
       <Ui id={params.id} />
     </div>
-  );
+  )
 }

@@ -1,26 +1,28 @@
-"use client";
+'use client'
 
-import { Spinner } from "@material-tailwind/react";
-import { useQuery } from "@tanstack/react-query";
-import { getMoviesById } from "app/_actions/movieActions";
+import { Spinner } from '@material-tailwind/react'
+import { useQuery } from '@tanstack/react-query'
+import { getMoviesById } from 'app/_actions/movieActions'
 
 export default function Ui({ id }) {
-  const movieId = parseInt(id);
+  const movieId = parseInt(id)
   const getMovieByIdQuery = useQuery({
-    queryKey: ["movie", movieId],
+    queryKey: ['movie', movieId],
     queryFn: () => getMoviesById(movieId),
     staleTime: Infinity,
     gcTime: 1000 * 300,
-  });
+  })
 
   return (
     <>
       {getMovieByIdQuery.isPending && (
-        <Spinner width={150} height={150} className="mt-16" />
+        <div className="w-full h-[750px] flex items-center justify-center">
+          <Spinner width={130} height={130} />
+        </div>
       )}
       {getMovieByIdQuery.data && (
-        <div className="w-full flex flex-col items-center justify-center mt-14 p-10 gap-10 lg:flex-row lg:items-start">
-          <div className="w-1/3 lg:min-w-[520px] lg:max-w-[520px]">
+        <div className="w-full flex flex-col items-center justify-center px-10 gap-10 lg:flex-row lg:items-start">
+          <div className="w-[550px]">
             <img
               className="w-full"
               src={getMovieByIdQuery.data[0].image_url}
@@ -54,5 +56,5 @@ export default function Ui({ id }) {
         </div>
       )}
     </>
-  );
+  )
 }
