@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ReactQueryClientProvider from "./_config/ReactQueryClientProvider";
@@ -8,11 +7,6 @@ import Footer from "./_components/Footer";
 import RecoilProvider from "./_config/RecoilProvider";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Netfilx clone",
-  description: "",
-};
 
 export default function RootLayout({
   children,
