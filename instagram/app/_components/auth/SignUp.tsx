@@ -10,6 +10,7 @@ export default function SignUp({ setMode }) {
     email: "",
     password: "",
   });
+  const [otp, setOtp] = useState("");
   const [confirmationRequired, setConfirmationRequired] = useState(false);
 
   const supabase = createBrowserSupabaseClient();
@@ -34,6 +35,21 @@ export default function SignUp({ setMode }) {
     },
   });
 
+  // vertify opt mutation
+  const vertifyOptMutation = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.auth.verifyOtp({
+        type: "signup",
+        email: info.email,
+        token: otp,
+      });
+
+      if (error) {
+        alert(error.message);
+      }
+    },
+  });
+
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="flex flex-col items-center justify-center border border-gray-300 p-10 gap-4 rounded-sm bg-white">
@@ -42,32 +58,59 @@ export default function SignUp({ setMode }) {
           alt="instagram logo"
           className="w-[300px] h-auto mb-2"
         />
-        <input
-          className="w-full p-2 border border-gray-300 rounded-sm"
-          placeholder="email"
-          type="text"
-          onChange={(e) => {
-            setInfo((prev) => ({ ...prev, email: e.target.value }));
-          }}
-        />
-        <input
-          className="w-full p-2 border border-gray-300 rounded-sm"
-          placeholder="password"
-          type="password"
-          onChange={(e) => {
-            setInfo((prev) => ({ ...prev, password: e.target.value }));
-          }}
-        />
+        {confirmationRequired ? (
+          <input
+            className="w-full p-2 border border-gray-300 rounded-sm"
+            placeholder="인증번호 6자리 입력"
+            type="text"
+            onChange={(e) => {
+              setOtp(e.target.value);
+            }}
+          />
+        ) : (
+          <>
+            {" "}
+            <input
+              className="w-full p-2 border border-gray-300 rounded-sm"
+              placeholder="email"
+              type="text"
+              onChange={(e) => {
+                setInfo((prev) => ({ ...prev, email: e.target.value }));
+              }}
+            />
+            <input
+              className="w-full p-2 border border-gray-300 rounded-sm"
+              placeholder="password"
+              type="password"
+              onChange={(e) => {
+                setInfo((prev) => ({ ...prev, password: e.target.value }));
+              }}
+            />
+          </>
+        )}
+
         <Button
           onClick={() => {
-            signupMutation.mutate();
+            if (confirmationRequired) {
+              vertifyOptMutation.mutate();
+            } else {
+              signupMutation.mutate();
+            }
           }}
-          loading={signupMutation.isPending}
-          disabled={confirmationRequired}
+          loading={
+            confirmationRequired
+              ? vertifyOptMutation.isPending
+              : signupMutation.isPending
+          }
+          disabled={
+            confirmationRequired
+              ? vertifyOptMutation.isPending
+              : signupMutation.isPending
+          }
           color="light-blue"
           className="text-white w-full text-md"
         >
-          {confirmationRequired ? "메일함을 확인해 주세요" : "가입하기"}
+          {confirmationRequired ? "인증하기" : "가입하기"}
         </Button>
       </div>
 
